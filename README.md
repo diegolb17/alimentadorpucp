@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# PROYECTO PUCP: ALIMENTADOR AUTOMATIZADO PARA GATOS
 
-TODO: Document your project here
+# BY DIEGO LUNA BALDWIN 20211878
