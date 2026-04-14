@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { useFeedingContext } from "@/context/FeedingContext";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Droplets } from "lucide-react";
 
 function formatTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);
@@ -10,6 +13,7 @@ function formatTime(seconds: number): string {
 
 const Countdown = () => {
   const { nextMealTime, secondsUntilNext, feedNow, feedingInProgress, feedingComplete } = useFeedingContext();
+  const [humidify, setHumidify] = useState(false);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in-up">
@@ -34,7 +38,13 @@ const Countdown = () => {
           <p className="text-muted-foreground">
             Programada a las <span className="font-semibold text-foreground">{nextMealTime}</span>
           </p>
-          <Button variant="feed" size="xl" onClick={feedNow} className="mt-4">
+          <div className="flex items-center justify-center gap-2">
+            <Checkbox checked={humidify} onCheckedChange={(c) => setHumidify(c === true)} id="humidify-countdown" />
+            <label htmlFor="humidify-countdown" className="text-sm flex items-center gap-1 cursor-pointer">
+              <Droplets className="h-4 w-4 text-primary" /> Humedecer porción
+            </label>
+          </div>
+          <Button variant="feed" size="xl" onClick={() => feedNow(humidify)} className="mt-4">
             🍽️ Alimentar ahora
           </Button>
         </div>

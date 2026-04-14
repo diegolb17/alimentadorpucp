@@ -3,18 +3,20 @@ import { useFeedingContext } from "@/context/FeedingContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Clock } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Trash2, Clock, Droplets } from "lucide-react";
 
 const Schedule = () => {
   const { meals, setMeals } = useFeedingContext();
   const [newTime, setNewTime] = useState("12:00");
+  const [newHumidify, setNewHumidify] = useState(false);
 
   const sortedMeals = [...meals].sort((a, b) => a.time.localeCompare(b.time));
 
   const addMeal = () => {
     if (meals.length >= 8) return;
     const id = crypto.randomUUID();
-    setMeals(prev => [...prev, { id, time: newTime, served: false }]);
+    setMeals(prev => [...prev, { id, time: newTime, served: false, humidify: newHumidify }]);
   };
 
   const removeMeal = (id: string) => {
@@ -23,6 +25,10 @@ const Schedule = () => {
 
   const updateMealTime = (id: string, time: string) => {
     setMeals(prev => prev.map(m => m.id === id ? { ...m, time } : m));
+  };
+
+  const toggleHumidify = (id: string, checked: boolean) => {
+    setMeals(prev => prev.map(m => m.id === id ? { ...m, humidify: checked } : m));
   };
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -57,12 +63,18 @@ const Schedule = () => {
               return (
                 <div
                   key={meal.id}
-                  className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-accent border-2 border-card shadow-md transition-all duration-500"
+                  className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-card shadow-md transition-all duration-500 ${
+                    meal.humidify ? "bg-primary" : "bg-accent"
+                  }`}
                   style={{ left: `${position}%` }}
-                  title={meal.time}
+                  title={`${meal.time}${meal.humidify ? " 💧" : ""}`}
                 />
               );
             })}
+          </div>
+          <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-accent inline-block" /> Normal</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-primary inline-block" /> Humedecida</span>
           </div>
         </CardContent>
       </Card>
@@ -78,7 +90,15 @@ const Schedule = () => {
                 <p className="font-heading font-semibold">Comida {index + 1}</p>
                 <p className="text-sm text-muted-foreground">
                   {meal.served ? "✅ Servida" : "⏳ Pendiente"}
+                  {meal.humidify && " 💧"}
                 </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={meal.humidify}
+                  onCheckedChange={(c) => toggleHumidify(meal.id, c === true)}
+                />
+                <Droplets className="h-4 w-4 text-primary" />
               </div>
               <Input
                 type="time"
@@ -103,6 +123,15 @@ const Schedule = () => {
               onChange={e => setNewTime(e.target.value)}
               className="w-32"
             />
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={newHumidify}
+                onCheckedChange={(c) => setNewHumidify(c === true)}
+              />
+              <label className="text-sm text-muted-foreground flex items-center gap-1 cursor-pointer">
+                <Droplets className="h-4 w-4 text-primary" /> Humedecer
+              </label>
+            </div>
             <Button onClick={addMeal} variant="default" className="gap-2">
               <Plus className="h-4 w-4" /> Agregar comida
             </Button>
