@@ -10,6 +10,7 @@ import Countdown from "./pages/Countdown";
 import Schedule from "./pages/Schedule";
 import ProgressPage from "./pages/Progress";
 import SettingsPage from "./pages/Settings";
+import Camera from "./pages/Camera";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/countdown" element={<Countdown />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/progress" element={<ProgressPage />} />
+              <Route path="/camera" element={<Camera />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

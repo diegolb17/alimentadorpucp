@@ -1,22 +1,22 @@
 import { useState } from "react";
-import { useFeedingContext } from "@/context/FeedingContext";
+import { useFeedingContext, availableCats } from "@/context/FeedingContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { RotateCcw, Bell, Moon } from "lucide-react";
+import { RotateCcw, Bell, Moon, Cat } from "lucide-react";
 
 const SettingsPage = () => {
-  const { setMeals } = useFeedingContext();
+  const { setMeals, selectedCat, setSelectedCatId } = useFeedingContext();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
   const resetSchedule = () => {
     setMeals([
-      { id: "1", time: "07:00", served: false },
-      { id: "2", time: "12:00", served: false },
-      { id: "3", time: "18:00", served: false },
-      { id: "4", time: "22:00", served: false },
+      { id: "1", time: "07:00", served: false, humidify: false },
+      { id: "2", time: "12:00", served: false, humidify: false },
+      { id: "3", time: "18:00", served: false, humidify: false },
+      { id: "4", time: "22:00", served: false, humidify: false },
     ]);
   };
 
@@ -31,6 +31,37 @@ const SettingsPage = () => {
         <h2 className="text-2xl font-heading font-bold">Ajustes</h2>
         <p className="text-muted-foreground">Administra las preferencias del alimentador</p>
       </div>
+
+      {/* Cat Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-heading flex items-center gap-2">
+            <Cat className="h-5 w-5 text-primary" /> Seleccionar gato
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">Elige el gato que será alimentado por el sistema</p>
+          <div className="grid grid-cols-3 gap-3">
+            {availableCats.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCatId(cat.id)}
+                className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 ${
+                  selectedCat.id === cat.id
+                    ? "border-primary bg-primary/10 shadow-md"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <div className="w-16 h-16 rounded-full overflow-hidden">
+                  <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                </div>
+                <span className="text-sm font-heading font-semibold">{cat.name}</span>
+                <span className="text-xs text-muted-foreground">{cat.breed}</span>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

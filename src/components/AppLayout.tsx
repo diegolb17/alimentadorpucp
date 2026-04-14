@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Clock, CalendarClock, BarChart3, Settings } from "lucide-react";
+import { LayoutDashboard, Clock, CalendarClock, BarChart3, Settings, Video } from "lucide-react";
 import pucpLogo from "@/assets/pucp-logo.png";
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
   { to: "/countdown", icon: Clock, label: "Cuenta regresiva" },
   { to: "/schedule", icon: CalendarClock, label: "Horario" },
   { to: "/progress", icon: BarChart3, label: "Progreso" },
+  { to: "/camera", icon: Video, label: "Cámara" },
   { to: "/settings", icon: Settings, label: "Ajustes" },
 ];
 
@@ -38,7 +39,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex flex-col items-center gap-1 py-3 px-2 text-xs transition-colors ${
+                className={`flex flex-col items-center gap-1 py-3 px-1 text-[10px] sm:text-xs transition-colors ${
                   active ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
                 }`}
               >

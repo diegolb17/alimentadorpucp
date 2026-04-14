@@ -1,9 +1,19 @@
+import { useState } from "react";
 import { useFeedingContext } from "@/context/FeedingContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Clock, Utensils, CalendarClock, Zap } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Clock, Utensils, CalendarClock, Zap, Droplets, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 function formatTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);
@@ -16,17 +26,47 @@ const Dashboard = () => {
   const {
     feedNow, feedingInProgress, feedingComplete,
     nextMealTime, secondsUntilNext, mealsServedToday, totalMealsToday,
+    selectedCat, waterLevel, cleaningAlert, dismissCleaningAlert, totalPortionsServed,
   } = useFeedingContext();
+
+  const [showFeedDialog, setShowFeedDialog] = useState(false);
+  const [humidifyNow, setHumidifyNow] = useState(false);
 
   const progress = totalMealsToday > 0 ? (mealsServedToday / totalMealsToday) * 100 : 0;
 
+  const handleFeedNow = () => {
+    setShowFeedDialog(true);
+    setHumidifyNow(false);
+  };
+
+  const confirmFeed = () => {
+    setShowFeedDialog(false);
+    feedNow(humidifyNow);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in-up">
+      {/* Cleaning Alert */}
+      {cleaningAlert && (
+        <div className="bg-accent/20 border border-accent rounded-lg p-4 flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-accent shrink-0" />
+          <div className="flex-1">
+            <p className="font-heading font-semibold text-sm">¡Hora de limpiar el plato!</p>
+            <p className="text-xs text-muted-foreground">Se han servido {totalPortionsServed} porciones. Se recomienda limpiar el plato.</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={dismissCleaningAlert}>Entendido</Button>
+        </div>
+      )}
+
+      {/* Cat Profile */}
       <div className="text-center">
+        <div className="mx-auto w-20 h-20 rounded-full overflow-hidden border-4 border-primary/30 mb-3">
+          <img src={selectedCat.image} alt={selectedCat.name} className="w-full h-full object-cover" />
+        </div>
         <h2 className="text-2xl font-heading font-bold">
           {feedingInProgress ? "Alimentando… 🍽️" :
             feedingComplete ? "Comida entregada 🐾" :
-            "Todo está en orden 🐾"}
+            `Hola, ${selectedCat.name} 🐾`}
         </h2>
         <p className="text-muted-foreground mt-1">
           {feedingInProgress ? "Dispensando comida ahora" :
@@ -77,15 +117,18 @@ const Dashboard = () => {
         <Card className="card-hover">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-body text-muted-foreground flex items-center gap-2">
-              <CalendarClock className="h-4 w-4 text-primary" />
-              Horario
+              <Droplets className="h-4 w-4 text-primary" />
+              Nivel de agua
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-lg font-heading font-semibold">{totalMealsToday} comidas por día</p>
-            <Link to="/schedule" className="text-sm text-primary hover:underline mt-1 inline-block">
-              Editar horario →
-            </Link>
+            <p className="text-3xl font-heading font-bold">
+              {waterLevel}<span className="text-lg text-muted-foreground">%</span>
+            </p>
+            <Progress value={waterLevel} className="mt-3 h-2" />
+            {waterLevel < 20 && (
+              <p className="text-xs text-destructive mt-1 font-medium">⚠️ Nivel bajo, rellenar pronto</p>
+            )}
           </CardContent>
         </Card>
 
@@ -98,7 +141,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <p className="text-lg font-heading font-semibold text-success">En línea y listo</p>
-            <p className="text-sm text-muted-foreground mt-1">Alimentador conectado</p>
+            <p className="text-sm text-muted-foreground mt-1">Porciones totales: {totalPortionsServed}</p>
           </CardContent>
         </Card>
       </div>
@@ -108,7 +151,7 @@ const Dashboard = () => {
           variant="feed"
           size="xl"
           className="flex-1"
-          onClick={feedNow}
+          onClick={handleFeedNow}
           disabled={feedingInProgress}
         >
           {feedingInProgress ? (
@@ -121,6 +164,31 @@ const Dashboard = () => {
           <Link to="/schedule">📅 Editar horario</Link>
         </Button>
       </div>
+
+      {/* Feed Now Dialog */}
+      <Dialog open={showFeedDialog} onOpenChange={setShowFeedDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Alimentar ahora</DialogTitle>
+            <DialogDescription>¿Deseas servir una porción a {selectedCat.name}?</DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-3 py-4">
+            <Checkbox
+              id="humidify-now"
+              checked={humidifyNow}
+              onCheckedChange={(c) => setHumidifyNow(c === true)}
+            />
+            <label htmlFor="humidify-now" className="text-sm font-medium cursor-pointer flex items-center gap-2">
+              <Droplets className="h-4 w-4 text-primary" />
+              Humedecer esta porción
+            </label>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowFeedDialog(false)}>Cancelar</Button>
+            <Button variant="feed" onClick={confirmFeed}>Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
