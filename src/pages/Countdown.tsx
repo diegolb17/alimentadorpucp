@@ -16,33 +16,33 @@ const Countdown = () => {
       {feedingInProgress ? (
         <div className="text-center space-y-4">
           <div className="text-6xl animate-pulse-soft">🍽️</div>
-          <h2 className="text-3xl font-heading font-bold">Feeding in progress…</h2>
-          <p className="text-muted-foreground">Dispensing food now</p>
+          <h2 className="text-3xl font-heading font-bold">Alimentando…</h2>
+          <p className="text-muted-foreground">Dispensando comida ahora</p>
         </div>
       ) : feedingComplete ? (
         <div className="text-center space-y-4">
           <div className="text-6xl">🐾</div>
-          <h2 className="text-3xl font-heading font-bold text-success">Meal delivered!</h2>
-          <p className="text-muted-foreground">Your cat is happy and fed</p>
+          <h2 className="text-3xl font-heading font-bold text-success">¡Comida entregada!</h2>
+          <p className="text-muted-foreground">Tu gato está feliz y alimentado</p>
         </div>
       ) : nextMealTime ? (
         <div className="text-center space-y-6">
-          <p className="text-muted-foreground text-lg">Next meal in</p>
+          <p className="text-muted-foreground text-lg">Próxima comida en</p>
           <div className="text-7xl md:text-8xl font-heading font-extrabold tabular-nums tracking-tight">
             {formatTime(secondsUntilNext)}
           </div>
           <p className="text-muted-foreground">
-            Scheduled at <span className="font-semibold text-foreground">{nextMealTime}</span>
+            Programada a las <span className="font-semibold text-foreground">{nextMealTime}</span>
           </p>
           <Button variant="feed" size="xl" onClick={feedNow} className="mt-4">
-            🍽️ Feed Now
+            🍽️ Alimentar ahora
           </Button>
         </div>
       ) : (
         <div className="text-center space-y-4">
           <div className="text-6xl">✨</div>
-          <h2 className="text-3xl font-heading font-bold text-success">All done for today!</h2>
-          <p className="text-muted-foreground">All meals have been served. See you tomorrow!</p>
+          <h2 className="text-3xl font-heading font-bold text-success">¡Listo por hoy!</h2>
+          <p className="text-muted-foreground">Todas las comidas fueron servidas. ¡Nos vemos mañana!</p>
         </div>
       )}
     </div>

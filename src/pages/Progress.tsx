@@ -7,7 +7,6 @@ const ProgressPage = () => {
   const sortedMeals = [...meals].sort((a, b) => a.time.localeCompare(b.time));
   const percentage = totalMealsToday > 0 ? Math.round((mealsServedToday / totalMealsToday) * 100) : 0;
 
-  // SVG circular progress
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
@@ -15,11 +14,10 @@ const ProgressPage = () => {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div>
-        <h2 className="text-2xl font-heading font-bold">Daily Progress</h2>
-        <p className="text-muted-foreground">Track today's feeding progress</p>
+        <h2 className="text-2xl font-heading font-bold">Progreso diario</h2>
+        <p className="text-muted-foreground">Seguimiento de las comidas de hoy</p>
       </div>
 
-      {/* Circular progress */}
       <div className="flex justify-center">
         <div className="relative">
           <svg width="200" height="200" className="-rotate-90">
@@ -36,20 +34,19 @@ const ProgressPage = () => {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-4xl font-heading font-bold">{mealsServedToday}</span>
-            <span className="text-sm text-muted-foreground">of {totalMealsToday} meals</span>
+            <span className="text-sm text-muted-foreground">de {totalMealsToday} comidas</span>
           </div>
         </div>
       </div>
 
       <p className="text-center text-lg font-heading font-semibold">
-        {percentage === 100 ? "All meals served today! ✨" :
-          `${mealsServedToday} of ${totalMealsToday} meals served today`}
+        {percentage === 100 ? "¡Todas las comidas servidas hoy! ✨" :
+          `${mealsServedToday} de ${totalMealsToday} comidas servidas hoy`}
       </p>
 
-      {/* Meal list */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-body text-muted-foreground">Meal Details</CardTitle>
+          <CardTitle className="text-sm font-body text-muted-foreground">Detalle de comidas</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {sortedMeals.map((meal, i) => (
@@ -60,11 +57,11 @@ const ProgressPage = () => {
                 <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
               )}
               <div className="flex-1">
-                <p className="font-medium">Meal {i + 1}</p>
+                <p className="font-medium">Comida {i + 1}</p>
                 <p className="text-sm text-muted-foreground">{meal.time}</p>
               </div>
               <span className={`text-sm font-medium ${meal.served ? "text-success" : "text-muted-foreground"}`}>
-                {meal.served ? "Served" : "Pending"}
+                {meal.served ? "Servida" : "Pendiente"}
               </span>
             </div>
           ))}

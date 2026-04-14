@@ -3,11 +3,11 @@ import { LayoutDashboard, Clock, CalendarClock, BarChart3, Settings } from "luci
 import pucpLogo from "@/assets/pucp-logo.png";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/countdown", icon: Clock, label: "Countdown" },
-  { to: "/schedule", icon: CalendarClock, label: "Schedule" },
-  { to: "/progress", icon: BarChart3, label: "Progress" },
-  { to: "/settings", icon: Settings, label: "Settings" },
+  { to: "/", icon: LayoutDashboard, label: "Inicio" },
+  { to: "/countdown", icon: Clock, label: "Cuenta regresiva" },
+  { to: "/schedule", icon: CalendarClock, label: "Horario" },
+  { to: "/progress", icon: BarChart3, label: "Progreso" },
+  { to: "/settings", icon: Settings, label: "Ajustes" },
 ];
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
@@ -15,7 +15,6 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
       <header className="border-b bg-card px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={pucpLogo} alt="PUCP Logo" className="h-8" />
@@ -24,15 +23,13 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
             <p className="text-xs text-muted-foreground">PUCP</p>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground hidden sm:block">Your cat is taken care of 🐾</p>
+        <p className="text-sm text-muted-foreground hidden sm:block">Tu gato está bien cuidado 🐾</p>
       </header>
 
-      {/* Main content */}
       <main className="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full">
         {children}
       </main>
 
-      {/* Bottom nav */}
       <nav className="border-t bg-card sticky bottom-0 z-50">
         <div className="max-w-5xl mx-auto flex justify-around">
           {navItems.map(item => {

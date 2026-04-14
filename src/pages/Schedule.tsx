@@ -25,24 +25,21 @@ const Schedule = () => {
     setMeals(prev => prev.map(m => m.id === id ? { ...m, time } : m));
   };
 
-  // Timeline hours
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div>
-        <h2 className="text-2xl font-heading font-bold">Feeding Schedule</h2>
-        <p className="text-muted-foreground">Set your cat's daily meal times</p>
+        <h2 className="text-2xl font-heading font-bold">Horario de alimentación</h2>
+        <p className="text-muted-foreground">Configura los horarios de comida de tu gato</p>
       </div>
 
-      {/* Visual timeline */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-body text-muted-foreground">Daily Timeline</CardTitle>
+          <CardTitle className="text-sm font-body text-muted-foreground">Línea de tiempo diaria</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative h-12 bg-muted rounded-lg overflow-hidden">
-            {/* Hour markers */}
             <div className="absolute inset-0 flex">
               {hours.filter(h => h % 6 === 0).map(h => (
                 <div
@@ -54,7 +51,6 @@ const Schedule = () => {
                 </div>
               ))}
             </div>
-            {/* Meal markers */}
             {sortedMeals.map(meal => {
               const [h, m] = meal.time.split(":").map(Number);
               const position = ((h * 60 + m) / (24 * 60)) * 100;
@@ -71,7 +67,6 @@ const Schedule = () => {
         </CardContent>
       </Card>
 
-      {/* Meal list */}
       <div className="space-y-3">
         {sortedMeals.map((meal, index) => (
           <Card key={meal.id} className="card-hover animate-fade-in-up" style={{ animationDelay: `${index * 80}ms` }}>
@@ -80,9 +75,9 @@ const Schedule = () => {
                 <Clock className="h-5 w-5 text-accent" />
               </div>
               <div className="flex-1">
-                <p className="font-heading font-semibold">Meal {index + 1}</p>
+                <p className="font-heading font-semibold">Comida {index + 1}</p>
                 <p className="text-sm text-muted-foreground">
-                  {meal.served ? "✅ Served" : "⏳ Upcoming"}
+                  {meal.served ? "✅ Servida" : "⏳ Pendiente"}
                 </p>
               </div>
               <Input
@@ -99,7 +94,6 @@ const Schedule = () => {
         ))}
       </div>
 
-      {/* Add meal */}
       {meals.length < 8 && (
         <Card className="border-dashed">
           <CardContent className="flex items-center gap-4 py-4">
@@ -110,7 +104,7 @@ const Schedule = () => {
               className="w-32"
             />
             <Button onClick={addMeal} variant="default" className="gap-2">
-              <Plus className="h-4 w-4" /> Add Meal
+              <Plus className="h-4 w-4" /> Agregar comida
             </Button>
           </CardContent>
         </Card>

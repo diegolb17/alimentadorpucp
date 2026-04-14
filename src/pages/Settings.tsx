@@ -28,21 +28,21 @@ const SettingsPage = () => {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div>
-        <h2 className="text-2xl font-heading font-bold">Settings</h2>
-        <p className="text-muted-foreground">Manage your feeder preferences</p>
+        <h2 className="text-2xl font-heading font-bold">Ajustes</h2>
+        <p className="text-muted-foreground">Administra las preferencias del alimentador</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base font-heading">Preferences</CardTitle>
+          <CardTitle className="text-base font-heading">Preferencias</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Bell className="h-5 w-5 text-primary" />
               <Label htmlFor="notifications" className="cursor-pointer">
-                <p className="font-medium">Notifications</p>
-                <p className="text-sm text-muted-foreground">Get alerts before meals</p>
+                <p className="font-medium">Notificaciones</p>
+                <p className="text-sm text-muted-foreground">Recibir alertas antes de las comidas</p>
               </Label>
             </div>
             <Switch id="notifications" checked={notifications} onCheckedChange={setNotifications} />
@@ -52,8 +52,8 @@ const SettingsPage = () => {
             <div className="flex items-center gap-3">
               <Moon className="h-5 w-5 text-primary" />
               <Label htmlFor="darkmode" className="cursor-pointer">
-                <p className="font-medium">Dark Mode</p>
-                <p className="text-sm text-muted-foreground">Switch to dark theme</p>
+                <p className="font-medium">Modo oscuro</p>
+                <p className="text-sm text-muted-foreground">Cambiar al tema oscuro</p>
               </Label>
             </div>
             <Switch id="darkmode" checked={darkMode} onCheckedChange={toggleDarkMode} />
@@ -63,14 +63,14 @@ const SettingsPage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base font-heading">Danger Zone</CardTitle>
+          <CardTitle className="text-base font-heading">Zona de peligro</CardTitle>
         </CardHeader>
         <CardContent>
           <Button variant="destructive" onClick={resetSchedule} className="gap-2">
-            <RotateCcw className="h-4 w-4" /> Reset Schedule
+            <RotateCcw className="h-4 w-4" /> Restablecer horario
           </Button>
           <p className="text-sm text-muted-foreground mt-2">
-            This will restore the default 4-meal schedule
+            Esto restaurará el horario predeterminado de 4 comidas
           </p>
         </CardContent>
       </Card>
