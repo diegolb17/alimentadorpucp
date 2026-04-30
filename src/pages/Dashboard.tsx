@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Clock, Utensils, CalendarClock, Zap, Droplets, AlertTriangle } from "lucide-react";
+import { Clock, Utensils, CalendarClock, Zap, Droplets, AlertTriangle, Weight } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Dialog,
@@ -31,17 +31,21 @@ const Dashboard = () => {
 
   const [showFeedDialog, setShowFeedDialog] = useState(false);
   const [humidifyNow, setHumidifyNow] = useState(false);
+  const [feedPortions, setFeedPortions] = useState(24);
+
+  const PORTION_OPTIONS = [12, 24, 36, 48, 60];
 
   const progress = totalMealsToday > 0 ? (mealsServedToday / totalMealsToday) * 100 : 0;
 
   const handleFeedNow = () => {
     setShowFeedDialog(true);
     setHumidifyNow(false);
+    setFeedPortions(24);
   };
 
   const confirmFeed = () => {
     setShowFeedDialog(false);
-    feedNow(humidifyNow);
+    feedNow(humidifyNow, feedPortions);
   };
 
   return (
@@ -182,6 +186,28 @@ const Dashboard = () => {
               <Droplets className="h-4 w-4 text-primary" />
               Humedecer esta porción
             </label>
+          </div>
+          <div className="space-y-2 pb-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Weight className="h-4 w-4" />
+              <span>Gramos a servir</span>
+            </div>
+            <div className="flex gap-1.5">
+              {PORTION_OPTIONS.map(grams => (
+                <button
+                  key={grams}
+                  type="button"
+                  onClick={() => setFeedPortions(grams)}
+                  className={`flex-1 h-10 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    feedPortions === grams
+                      ? "bg-primary text-primary-foreground shadow-md scale-105"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                  }`}
+                >
+                  {grams}g
+                </button>
+              ))}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowFeedDialog(false)}>Cancelar</Button>

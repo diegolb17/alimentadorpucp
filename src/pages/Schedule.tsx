@@ -4,23 +4,45 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Trash2, Clock, Droplets } from "lucide-react";
+import { Plus, Trash2, Clock, Droplets, Loader2, Weight } from "lucide-react";
+
+const PORTION_OPTIONS = [12, 24, 36, 48, 60];
 
 const Schedule = () => {
-  const { meals, setMeals } = useFeedingContext();
+  const { meals, setMeals, addSchedule, deleteSchedule, loadingSchedules, schedulesError } = useFeedingContext();
   const [newTime, setNewTime] = useState("12:00");
   const [newHumidify, setNewHumidify] = useState(false);
+  const [newPortions, setNewPortions] = useState(24);
+  const [addingMeal, setAddingMeal] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const sortedMeals = [...meals].sort((a, b) => a.time.localeCompare(b.time));
 
-  const addMeal = () => {
+  const addMeal = async () => {
     if (meals.length >= 8) return;
-    const id = crypto.randomUUID();
-    setMeals(prev => [...prev, { id, time: newTime, served: false, humidify: newHumidify }]);
+    setAddingMeal(true);
+    try {
+      await addSchedule(newTime, newHumidify, newPortions);
+      // Resetear formulario
+      setNewTime("12:00");
+      setNewHumidify(false);
+      setNewPortions(24);
+    } catch (error) {
+      // Error ya manejado en el contexto
+    } finally {
+      setAddingMeal(false);
+    }
   };
 
-  const removeMeal = (id: string) => {
-    setMeals(prev => prev.filter(m => m.id !== id));
+  const removeMeal = async (id: string) => {
+    setDeletingId(id);
+    try {
+      await deleteSchedule(id);
+    } catch (error) {
+      // Error ya manejado en el contexto
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const updateMealTime = (id: string, time: string) => {
@@ -39,6 +61,18 @@ const Schedule = () => {
         <h2 className="text-2xl font-heading font-bold">Horario de alimentación</h2>
         <p className="text-muted-foreground">Configura los horarios de comida de tu gato</p>
       </div>
+
+      {schedulesError && (
+        <div className="rounded-lg bg-destructive/10 border border-destructive p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-destructive font-medium">Error al cargar horarios</span>
+          </div>
+          <p className="text-sm text-destructive">{schedulesError}</p>
+          <p className="text-xs text-muted-foreground mt-2">
+            Mostrando horarios guardados localmente. Intenta recargar la página.
+          </p>
+        </div>
+      )}
 
       <Card>
         <CardHeader className="pb-3">
@@ -87,7 +121,7 @@ const Schedule = () => {
                 <Clock className="h-5 w-5 text-accent" />
               </div>
               <div className="flex-1">
-                <p className="font-heading font-semibold">Comida {index + 1}</p>
+                <p className="font-heading font-semibold">Comida {index + 1} — {meal.portions}g</p>
                 <p className="text-sm text-muted-foreground">
                   {meal.served ? "✅ Servida" : "⏳ Pendiente"}
                   {meal.humidify && " 💧"}
@@ -106,8 +140,12 @@ const Schedule = () => {
                 onChange={e => updateMealTime(meal.id, e.target.value)}
                 className="w-32"
               />
-              <Button variant="ghost" size="icon" onClick={() => removeMeal(meal.id)}>
-                <Trash2 className="h-4 w-4 text-destructive" />
+              <Button variant="ghost" size="icon" onClick={() => removeMeal(meal.id)} disabled={deletingId === meal.id || loadingSchedules}>
+                {deletingId === meal.id ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-destructive" />
+                ) : (
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                )}
               </Button>
             </CardContent>
           </Card>
@@ -116,25 +154,60 @@ const Schedule = () => {
 
       {meals.length < 8 && (
         <Card className="border-dashed">
-          <CardContent className="flex items-center gap-4 py-4">
-            <Input
-              type="time"
-              value={newTime}
-              onChange={e => setNewTime(e.target.value)}
-              className="w-32"
-            />
-            <div className="flex items-center gap-2">
-              <Checkbox
-                checked={newHumidify}
-                onCheckedChange={(c) => setNewHumidify(c === true)}
+          <CardContent className="space-y-4 py-4">
+            {/* Fila superior: hora + humidificar + botón */}
+            <div className="flex items-center gap-4">
+              <Input
+                type="time"
+                value={newTime}
+                onChange={e => setNewTime(e.target.value)}
+                className="w-32"
               />
-              <label className="text-sm text-muted-foreground flex items-center gap-1 cursor-pointer">
-                <Droplets className="h-4 w-4 text-primary" /> Humedecer
-              </label>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={newHumidify}
+                  onCheckedChange={(c) => setNewHumidify(c === true)}
+                />
+                <label className="text-sm text-muted-foreground flex items-center gap-1 cursor-pointer">
+                  <Droplets className="h-4 w-4 text-primary" /> Humedecer
+                </label>
+              </div>
+              <Button onClick={addMeal} variant="default" className="gap-2 ml-auto" disabled={addingMeal || loadingSchedules}>
+                {addingMeal ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                {addingMeal ? "Agregando..." : "Agregar comida"}
+              </Button>
             </div>
-            <Button onClick={addMeal} variant="default" className="gap-2">
-              <Plus className="h-4 w-4" /> Agregar comida
-            </Button>
+
+            {/* Selector de porciones */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Weight className="h-4 w-4" />
+                <span>Porción por comida</span>
+              </div>
+              <div className="flex gap-1.5">
+                {PORTION_OPTIONS.map(grams => (
+                  <button
+                    key={grams}
+                    type="button"
+                    onClick={() => setNewPortions(grams)}
+                    className={`flex-1 h-10 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      newPortions === grams
+                        ? "bg-primary text-primary-foreground shadow-md scale-105"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                    }`}
+                  >
+                    {grams}g
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                Porción: <span className="font-semibold text-foreground">{newPortions}g</span>
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}
